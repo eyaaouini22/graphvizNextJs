@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.FileCard {
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .FileCard:hover {
+    transform: scale(1.02);
+  }
+  .u-float-right{
+    float: right;
+  }
+  .p-t-10{
+    padding-top: 10px;
+  }
+  .m-t-_8{
+    margin-top: -8px;
+  }
+  
+  .u-full-width{
+    width: 100%;
+  }
