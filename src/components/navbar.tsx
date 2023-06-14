@@ -23,6 +23,9 @@ const Navbar = () => {
       </FlowbiteNavbar.Brand>
       <FlowbiteNavbar.Toggle />
       <FlowbiteNavbar.Collapse>
+      <FlowbiteNavbar.Link href="/records" active={selectedPage === "Records"}>
+      Records
+        </FlowbiteNavbar.Link>
         <FlowbiteNavbar.Link href="/" active={selectedPage === "Home"}>
           Home
         </FlowbiteNavbar.Link>

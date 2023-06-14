@@ -1,9 +1,7 @@
 import axios from 'axios';
 import { log } from 'console';
 import React, { useState } from 'react'
-interface MyComponentProps {
-    file: any;
-   }
+ 
 const FileCard = ({file }:any) => {
  console.log(file);
  const [isModalOpen, setIsModalOpen] = useState(false);
