@@ -1,24 +1,24 @@
-export class product{
+export class productOffer{
 
-private _id:string;
+private _productId:string;
 private _productName:string;
 private _brandName:string;
 private _storeName:string;   
  private _groupingKeys:string[];
-constructor(id:string, productName:string,brandName:string,storeName:string , groupingKeys:string[] ){
+constructor(productId:string, productName:string,brandName:string,storeName:string , groupingKeys:string[] ){
 
-this._id=id;
+this._productId=productId;
 this._productName=productName;
 this._brandName=brandName;
 this._storeName=storeName;
 this._groupingKeys=groupingKeys;
 }
- get id(): string {
-    return this._id;
+ get productId(): string {
+    return this._productId;
   }
 
-  set id(value: string) {
-    this._id = value;
+  set productId(value: string) {
+    this._productId = value;
   }
   get productName(): string {
     return this._productName;

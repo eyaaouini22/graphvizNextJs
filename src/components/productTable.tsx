@@ -1,10 +1,11 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { product } from '~/pages/api/product';
+import { groupProduct } from '~/pages/api/groupProduct';
+import { productOffer } from '~/pages/api/productOffer';
 interface ProductTableProps {
-    products: product[];
+  groupProducts: groupProduct[];
   }
-  const ProductTable: React.FC<ProductTableProps> = ({ products }) => {  
+  const ProductTable: React.FC<ProductTableProps> = ({ groupProducts }) => {  
   const [isModalOpen, setIsModalOpen] = useState(false);
    const [image, setimage] = useState('');
    const generateImage = async (id:String) => {
@@ -23,37 +24,51 @@ return (
       <thead>
         <tr>
           <th className="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider">
-            Grouping Keys
+            Group ID
           </th>
           <th className="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider">
-            ID
+            Image
           </th>
           <th className="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider">
-            Product Name
+            Product offers
           </th>
-          <th className="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider">
+          {/* <th className="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider">
             Brand Name
           </th>
           <th className="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider">
             Store Name
-          </th>
+          </th> */}
           <th className="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider">
             Action
           </th>
         </tr>
       </thead>
       <tbody className="bg-white divide-y divide-gray-200">
-        {products.map(product => (
-          <tr key={product.id}>
+        {groupProducts?.map(groupProduct => (
+          <tr key={groupProduct.gId}>
             <td className="px-6 py-4 whitespace-no-wrap">
               <div className="text-sm leading-5 text-gray-900">
-                {product.groupingKeys.join(', ')}
+                {
+                groupProduct.gId}
+                {/* //product.groupingKeys.join(', ') */}
+                
               </div>
             </td>
             <td className="px-6 py-4 whitespace-no-wrap">
-              <div className="text-sm leading-5 text-gray-900">{product.id}</div>
+              <img
+                src={groupProduct.productImage}
+                // alt="Product Image"
+                className="w-10 h-10 rounded-full"
+              />
             </td>
             <td className="px-6 py-4 whitespace-no-wrap">
+              {groupProduct.offers.map((offer) => (
+                <div key={offer.productId} className="text-sm leading-5 text-gray-900">
+                  {offer.productName}
+                </div>
+              ))}
+            </td>
+            {/* <td className="px-6 py-4 whitespace-no-wrap">
               <div className="text-sm leading-5 text-gray-900">{product.productName}</div>
             </td>
             <td className="px-6 py-4 whitespace-no-wrap">
@@ -61,12 +76,12 @@ return (
             </td>
             <td className="px-6 py-4 whitespace-no-wrap">
               <div className="text-sm leading-5 text-gray-900">{product.storeName}</div>
-            </td>
+            </td> */}
             <td className="px-6 py-4 whitespace-no-wrap">
               <button
                 className="px-4 py-2 bg-blue-500 text-white font-semibold rounded"
                 style={{marginRight:"5px"}}
-                onClick={() => generateImage(product.id)}
+                onClick={() => generateImage(groupProduct.gId)}
               >
                 Image
               </button>

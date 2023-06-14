@@ -19,17 +19,11 @@ const FileCard = ({file }:any) => {
 
 
 
-const handleUpload = async () => {
+const renderImage = async () => {
   try {
     console.log(file.name);
     console.log(inputValue);
-
-    //  const response = await axios.get("http://localhost:8084/graph/render", {
-    //   params: {
-    //     fileName: file.name,
-    //     params: inputValue
-    //   }});
-
+ 
       const response = await axios.get("http://localhost:8084/graph/renderByte", {
         params: {
           fileName: file.name,
@@ -67,7 +61,7 @@ const handleUpload = async () => {
      <button  className="bg-blue-500 u-float-right text-white py-2 px-4 rounded-lg hover:bg-blue-600 m-t-_8"   onClick={handleClick}>Generate</button>  
          <div  style={{ display: isVisible ? 'block' : 'none' }}  className='relative p-t-10'>
         <input   type="text" id="default-search" onChange={handleChange}  value={inputValue}  className="block p-4 pl-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="please enter parameters " />
-            <button  onClick={handleUpload}  type="submit" className="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">ok</button>
+            <button  onClick={renderImage}  type="submit" className="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">ok</button>
         
             {isModalOpen && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
