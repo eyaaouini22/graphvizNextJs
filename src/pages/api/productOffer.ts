@@ -1,11 +1,13 @@
+import { groupingKey } from "./groupingKey";
+
 export class productOffer{
 
 private _productId:string;
 private _productName:string;
 private _brandName:string;
-private _storeName:string;   
- private _groupingKeys:string[];
-constructor(productId:string, productName:string,brandName:string,storeName:string , groupingKeys:string[] ){
+private _storeName:string; 
+  private _groupingKeys:groupingKey[];
+constructor(productId:string, productName:string,brandName:string,storeName:string , groupingKeys:groupingKey[] ){
 
 this._productId=productId;
 this._productName=productName;
@@ -41,10 +43,10 @@ this._groupingKeys=groupingKeys;
   get storeName(): string {
     return this._storeName;
   }
-  set groupingKeys(value: string[]) {
+  set groupingKeys(value: groupingKey[]) {
     this._groupingKeys = value;
   }
-  get groupingKeys(): string []{
+  get groupingKeys(): groupingKey []{
     return this._groupingKeys;
   }
 }

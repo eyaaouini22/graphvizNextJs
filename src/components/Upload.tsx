@@ -7,9 +7,6 @@ const Upload=()=>{
     const [selectedImage, setSelectedImage] = useState("");
     const [selectedFile, setSelectedFile] = useState<File>();
   
-
-
-
   const handleUpload = async () => {
     try {
       setUploading(true);
@@ -45,15 +42,7 @@ const Upload=()=>{
                   const file = target.files[0];
                    setSelectedFile(file);
                 }
-              }}/>
- 
-
-
-
-
-
-
-          
+              }}/>         
           </label>
           <button
             onClick={handleUpload}
@@ -73,10 +62,6 @@ const Upload=()=>{
         </div>
       );
     };
-
-
-
-
 
 export default Upload;
 

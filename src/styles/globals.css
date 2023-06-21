@@ -21,3 +21,14 @@
   .u-full-width{
     width: 100%;
   }
+  .table-container {
+    height: 400px; /* Adjust the height as needed */
+    width: 100%; /* Adjust the width as needed */
+    overflow: auto;
+    overflow-x: auto; /* Enable horizontal scrolling */
+  }
+  
+  .table-wrapper {
+    max-width: 100%; /* Adjust the max-width as needed */
+    overflow-x: auto; /* Enable horizontal scrolling */
+  }
