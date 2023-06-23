@@ -6,14 +6,16 @@ private _productId:string;
 private _productName:string;
 private _brandName:string;
 private _storeName:string; 
+private _productUrl:string;
   private _groupingKeys:groupingKey[];
-constructor(productId:string, productName:string,brandName:string,storeName:string , groupingKeys:groupingKey[] ){
+constructor(productId:string, productName:string,brandName:string,storeName:string , groupingKeys:groupingKey[] ,url:string){
 
 this._productId=productId;
 this._productName=productName;
 this._brandName=brandName;
 this._storeName=storeName;
 this._groupingKeys=groupingKeys;
+this._productUrl=url;
 }
  get productId(): string {
     return this._productId;
@@ -48,5 +50,11 @@ this._groupingKeys=groupingKeys;
   }
   get groupingKeys(): groupingKey []{
     return this._groupingKeys;
+  }
+  set productUrl(value: string) {
+    this._productUrl= value;
+  }
+  get productUrl(): string{
+    return this._productUrl;
   }
 }

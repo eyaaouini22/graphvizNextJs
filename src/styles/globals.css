@@ -21,14 +21,29 @@
   .u-full-width{
     width: 100%;
   }
-  .table-container {
+  
+  .table-llcontainer {
     height: 400px; /* Adjust the height as needed */
     width: 100%; /* Adjust the width as needed */
     overflow: auto;
     overflow-x: auto; /* Enable horizontal scrolling */
   }
   
-  .table-wrapper {
+  .table-wrapkkper {
     max-width: 100%; /* Adjust the max-width as needed */
     overflow-x: auto; /* Enable horizontal scrolling */
   }
+  .tooltip {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+  }
+  
+  .tooltip:hover {
+    white-space: normal;
+    overflow: visible;
+    z-index: 9999;
+  }
+  

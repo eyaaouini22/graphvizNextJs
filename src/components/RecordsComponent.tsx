@@ -96,8 +96,7 @@ setSearchByNameInputValue(event.target.value);
     setCurrentPage(pageNumber);
    };
 
-    const [products, setProducts] = useState<productOffer[]>([]); // Initialize an empty array of the correct type
-    const [groupProducts, setGroupProducts] = useState<groupProduct[]>([]); // Initialize an empty array of the correct type
+     const [groupProducts, setGroupProducts] = useState<groupProduct[]>([]); // Initialize an empty array of the correct type
 
        const [isModalOpen, setIsModalOpen] = useState(false);
        const [image, setimage] = useState('');
@@ -118,17 +117,15 @@ setSearchByNameInputValue(event.target.value);
           try {
             const response = await axios.get('http://localhost:8082/group-graph/products', {
               params: {
+                size:100,
                 page: currentPage,
                 productName: searchByName
               }});
             const jsonResponse = response.data;
             const parsedContent: groupProduct[] = jsonResponse.data.content;
             setGroupProducts(parsedContent);
-            console.log("hii",response.data);
-            console.log("paage",currentPage)
-            setTotalPages(jsonResponse.data.totalPages);
-           console.log("groups",parsedContent);
-          } catch (error) {
+              setTotalPages(jsonResponse.data.totalPages);
+           } catch (error) {
             console.error('Error fetching data:', error);
           }
         };
