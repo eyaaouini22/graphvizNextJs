@@ -4,20 +4,29 @@ import axios from 'axios';
 import { graphviz } from '~/pages/api/graphviz';
 import { productOffer } from '~/pages/api/productOffer';
 import { groupProduct } from '~/pages/api/groupProduct';
+import { productSearch } from '~/pages/api/productSearch';
  
 const RecordsComponent = () => {
- 
+  const API_BASE_URL = 'http://localhost:8082/group-graph';
    const [currentPage, setCurrentPage] = useState(1); // Current page number
   const [totalPages, setTotalPages] = useState(1); // totale page numbers
-const[searchByNameInputValue , setSearchByNameInputValue]= useState("");
-const[searchByName, setSearchByName]= useState("");
+ const[searchByName, setSearchByName]= useState("");
+const[searchById, setSearchById]= useState("");
+const[searchByUrl, setSearchByUrl]= useState("");
+const[searchByBrandName, setsearchByBrandName]= useState("");
+const[search, setSearch]= useState("");
+const [groupProducts, setGroupProducts] = useState<groupProduct[]>([]); // Initialize an empty array of the correct type
+const [productsSearchHistory, setProductsSearchHistory] = useState<productSearch[]>([]); // Initialize an empty array of the correct type
 
-  const handleChange=(event:any)=>{
-setSearchByNameInputValue(event.target.value);
-  }
-  const searchByNameEvent=()=>{
-    setSearchByName(searchByNameInputValue);
-      }
+const [isModalOpen, setIsModalOpen] = useState(false);
+const [image, setimage] = useState('');
+
+//   const handleChange=(event:any)=>{
+// setSearchByNameInputValue(event.target.value);
+//   }
+  // const searchByNameEvent=()=>{
+  //   setSearchByName(searchByNameInputValue);
+  //     }
    // Pagination component
    const Pagination = () => {
     const pageNumbers = [];
@@ -96,10 +105,7 @@ setSearchByNameInputValue(event.target.value);
     setCurrentPage(pageNumber);
    };
 
-     const [groupProducts, setGroupProducts] = useState<groupProduct[]>([]); // Initialize an empty array of the correct type
-
-       const [isModalOpen, setIsModalOpen] = useState(false);
-       const [image, setimage] = useState('');
+    
        const generateImage = async () => {
         try {
             const response = await axios.get("http://localhost:8082/group-graph/converter/generateGroupGraph")
@@ -107,11 +113,18 @@ setSearchByNameInputValue(event.target.value);
          setimage(response.data);
          } catch (error: any) {
           console.log(error.response?.data);
-        }
-       
-      };
+        }};
 
-      useEffect(() => {
+        const saveSearch =  async (searchQuery: string, searchType: string): Promise<void> => {
+          try {
+            await axios.post(`${API_BASE_URL}/productsearchhistory`, { searchQuery, searchType });
+          } catch (error) {
+            // Handle error
+            console.error('Error:', error);
+          }
+        };
+
+       useEffect(() => {
         const fetchData = async () => {
           console.log("value",searchByName)
           try {
@@ -119,7 +132,10 @@ setSearchByNameInputValue(event.target.value);
               params: {
                 size:100,
                 page: currentPage,
-                productName: searchByName
+                productName: searchByName,
+                brandName:searchByBrandName,
+                productUrl: searchByUrl
+
               }});
             const jsonResponse = response.data;
             const parsedContent: groupProduct[] = jsonResponse.data.content;
@@ -129,31 +145,82 @@ setSearchByNameInputValue(event.target.value);
             console.error('Error fetching data:', error);
           }
         };
-    
+        const fetchSearchHistory = async () => {
+          console.log("value",searchByName)
+          try {
+            const response = await axios.get('http://localhost:8082/group-graph/productsearchhistory');
+              setProductsSearchHistory(response.data);
+            } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        };
+        fetchSearchHistory();
         fetchData();
-      }, [currentPage,searchByName]);
+      }, [currentPage,search]);
     
 
-   
+         // Update the search value and apply the filtering
+
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      const queryType= e.currentTarget.id;
+const value =e.currentTarget.value.trim();
+console.log("my valuue",e.currentTarget.id);
+      if( e.currentTarget.id==="brandName")
+      setsearchByBrandName(value);
+     else  if( e.currentTarget.id=="pid")
+     setSearchById(value)
+      else if(e.currentTarget.id=="url")
+      setSearchByUrl(value);
+      else {
+      setSearchByName(value);
+      }
+      saveSearch(value, queryType);
+      setSearch(value);
+    }
+  };
  
+
+  
  
   return (
     <div>
-      <h1 style={{fontSize: "20",marginBottom: "20px"}}>Product offers
+      <h1 style={{fontSize: "20px",marginBottom: "20px"}}>Product offers
+      <div  style={{display: "flex",marginTop: "15px"}} className="mt-15">
 
-      <div className="max-w-2xl mx-auto">
-
-  
-      <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300">Search</label>
-      <div className="relative">
+     
+      {/* <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300">Search</label> */}
+      <div className="relative ml-5">
           <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
               <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
           </div>
-          <input type="search"  onChange={handleChange}  value={searchByNameInputValue} id="default-search" className="block p-4 pl-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search product's name" />
-          <button type="submit"    onClick={searchByNameEvent}   className="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button>
+          <input type="search"    
+          onKeyDown={handleSearch} id="name"  onChange={(e) => setSearchByName(e.target.value)} value={searchByName}  className="block p-4 pl-10  text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search product's name" />
+          {/* <button type="submit"    onClick={setSearchByName(searchByName)}   className="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button> */}
       </div>
       
-  
+      <div className="relative  ml-5">
+          <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+              <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </div>
+          <input type="search"   onChange={(e) => setSearchById(e.target.value)}
+          onKeyDown={handleSearch}  key="id" value={searchById} id="pid"  className="block p-4 pl-10  text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search product's id" />
+       </div>
+      <div className="relative  ml-5">
+          <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+              <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </div>
+          <input type="search"   onChange={(e) => setsearchByBrandName(e.target.value)}
+          onKeyDown={handleSearch}  key="upc"   value={searchByBrandName} id="upc" className="block p-4 pl-10  text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search product's brandName" />
+       </div>
+      <div className="relative  ml-5">
+          <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+              <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </div>
+          <input type="search"   onChange={(e) => setSearchByUrl(e.target.value)}
+          onKeyDown={handleSearch} key="url" value={searchByUrl} id="url" className="block p-4 pl-10  text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search product's url" />
+       </div>
+       
   </div>
 
         {/* <button  style={{marginLeft: "20px"}} className="bg-blue-500  text-white py-2 px-4 rounded-lg hover:bg-blue-600 m-t-_8"   onClick={generateImage}>show group graph</button>   */}
