@@ -11,6 +11,8 @@ const ProductTable: React.FC<ProductTableProps> = ({ groupProducts }) => {
   const [colorsMap, setColorsMap] = useState<Record<string, string>>({})
   const [searchValue, setSearchValue] = useState("")
   const [image, setimage] = useState("")
+  const [groupingKeyTypes, setGroupingKeyTypes] = useState<String[]>([])
+
   const generateImage = async (id: String) => {
     try {
       const response = await axios.get(
@@ -39,13 +41,13 @@ const ProductTable: React.FC<ProductTableProps> = ({ groupProducts }) => {
     groupProducts.forEach((groupProduct) => {
       groupProduct.offers.forEach((offer) => {
         offer.groupingKeys.forEach((groupingKey) => {
+          if (!groupingKeyTypes.includes(groupingKey.type)) {
+            groupingKeyTypes.push(groupingKey.type)
+          }
           const { type, value } = groupingKey
           const key = `${type}-${value}`
-          console.log("key", key)
           // Increment the count for the grouping key value
           groupingKeyCounts[key] = (groupingKeyCounts[key] || 0) + 1
-
-          console.log("number", groupingKeyCounts[key])
         })
       })
     })
@@ -104,9 +106,13 @@ const ProductTable: React.FC<ProductTableProps> = ({ groupProducts }) => {
             <th className="px-4 py-2 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider">
               Product url
             </th>
-            <th className="px-4 py-2 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider ">
-              Grouping Keys
-            </th>
+            {groupingKeyTypes.map((type) => (
+              <th
+                key={type}
+                className="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider">
+                gk-{type}
+              </th>
+            ))}
             <th className="px-4 py-2 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider ">
               Store Name
             </th>
@@ -161,7 +167,31 @@ const ProductTable: React.FC<ProductTableProps> = ({ groupProducts }) => {
                         </span>
                       </a>
                     </td>
-                    <td className="px-4 py-2 whitespace-nowrap  ">
+                    {groupingKeyTypes.map((type) => {
+                      const groupingKeyValue = product.groupingKeys.find(
+                        (key) => key.type === type
+                      )
+                      const gkvalue = groupingKeyValue
+                        ? groupingKeyValue.value
+                        : "-"
+                      const key = `${type}-${gkvalue}`
+                      const color = colorsMap[key] || ""
+
+                      return (
+                        <td
+                          key={`${type}_${group.gId}`}
+                          className="px-6 py-4 whitespace-no-wrap">
+                          <span
+                            className="tooltip max-w-xs"
+                            key={key}
+                            style={{ backgroundColor: color }}>
+                            {gkvalue}
+                          </span>
+                        </td>
+                      )
+                    })}
+
+                    {/* <td className="px-4 py-2 whitespace-nowrap  ">
                       <ul className="list-disc list-inside">
                         {product.groupingKeys.map((groupingKey) => {
                           // Get the color from colorsMap
@@ -179,9 +209,10 @@ const ProductTable: React.FC<ProductTableProps> = ({ groupProducts }) => {
                           )
                         })}
                       </ul>
+                    </td> */}
+                    <td className="px-6 py-4 whitespace-no-wrap">
+                      {product.storeName}
                     </td>
-                    <td className="px-6 py-4 whitespace-no-wrap">{product.storeName}
-</td>
                     <td className="px-6 py-4 whitespace-no-wrap">
                       <button
                         className="px-4 py-2 bg-blue-500 text-white font-semibold rounded"
