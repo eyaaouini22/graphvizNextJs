@@ -3,16 +3,19 @@ import React, { useEffect, useState } from "react"
 import { groupProduct } from "~/pages/api/groupProduct"
 
 interface ProductTableProps {
-  groupProducts: groupProduct[]
+  groupProducts: groupProduct[];
+  setGroupProducts: (newValue: groupProduct[]) => void;
 }
 
-const ProductTable: React.FC<ProductTableProps> = ({ groupProducts }) => {
+const ProductTable: React.FC<ProductTableProps> = ({ groupProducts ,setGroupProducts}) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [colorsMap, setColorsMap] = useState<Record<string, string>>({})
   const [searchValue, setSearchValue] = useState("")
   const [image, setimage] = useState("")
   const [groupingKeyTypes, setGroupingKeyTypes] = useState<String[]>([])
-
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortColumn, setSortColumn] = useState("");
+  
   const generateImage = async (id: String) => {
     try {
       const response = await axios.get(
@@ -66,22 +69,42 @@ const ProductTable: React.FC<ProductTableProps> = ({ groupProducts }) => {
     })
     setColorsMap(newColorsMap)
   }
+  const handleSort = (column:string) => {
+    if (column === sortColumn) {
+      // If the same column is clicked, toggle the sorting order
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      // If a different column is clicked, set the new column and reset the sorting order
+      setSortColumn(column);
+      setSortOrder("asc");
+    }
+  };
+  
+  // Sort the groups array based on the selected column and sorting order
+
 
   useEffect(() => {
     applyGroupingKeyColors()
   }, [groupProducts])
 
+  
+  useEffect(() => {
+    const sortedGroups = [...groupProducts].sort((a, b) => {
+      if (sortColumn === "gID") {
+        return sortOrder === "asc"
+          ? a.gId.localeCompare(b.gId)
+          : b.gId.localeCompare(a.gId);
+      }
+      // Add additional cases for sorting other columns if needed
+      return 0;
+    });
+    setGroupProducts(sortedGroups);
+     console.log("hello test sort")
+  }, [sortColumn,sortOrder])
+
   return (
     <div className="overflow-x-scroll overflow-y-scroll max-h-[800px] max-w-[1500px]">
-      {/* <div className="mb-4">
-        <input
-          type="text"
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          placeholder="Search by Product ID"
-          className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-        />
-      </div> */}
+ 
 
       <table className="table-auto  border border-gray-300 min-w-max">
         <thead className="sticky top-0 bg-gray-200 z-1">
@@ -90,9 +113,18 @@ const ProductTable: React.FC<ProductTableProps> = ({ groupProducts }) => {
               #
             </th>{" "}
             {/* Add the new column */}
-            <th className=" px-4 py-2 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider ">
-              Group Id
-            </th>
+
+            <th className="px-4 py-2 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider" onClick={() => handleSort("gID")}>
+            Group Id
+  {sortColumn === "gID" && (
+
+<span>{sortOrder === "asc" ? " ▲" : " ▼"}</span>
+    // <span className="ml-1">
+    //   {sortOrder === "asc" ? <ArrowUpIcon /> : <ArrowDownIcon />}
+    // </span>
+  )}
+</th>
+ 
             <th className="px-4 py-2 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider ">
               {" "}
               Image

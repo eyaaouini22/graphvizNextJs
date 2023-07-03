@@ -57,7 +57,7 @@
   }
   
   .autocomplete-suggestions {
-    z-index: 1;
+    z-index: 2;
     position: absolute;
     top: 100%;
     left: 0;
@@ -84,7 +84,9 @@
     background-color: #f2f2f2;
   }
   
-  
+  .sticky{
+    z-index: 1;
+  }
   
   
   

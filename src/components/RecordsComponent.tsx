@@ -179,7 +179,7 @@ const RecordsComponent = () => {
       [key]: true
     }))
   }
-
+ 
   const handleKeyDown = (
     queryType: string,
     event: React.KeyboardEvent<HTMLInputElement>
@@ -454,7 +454,7 @@ const RecordsComponent = () => {
         </div>
       )}
 
-      <ProductTable groupProducts={groupProducts} />
+      <ProductTable groupProducts={groupProducts} setGroupProducts={setGroupProducts} />
       <Pagination />
     </div>
   )
