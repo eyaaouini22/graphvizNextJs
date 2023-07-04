@@ -10,8 +10,7 @@ interface ProductTableProps {
 const ProductTable: React.FC<ProductTableProps> = ({ groupProducts ,setGroupProducts}) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [colorsMap, setColorsMap] = useState<Record<string, string>>({})
-  const [searchValue, setSearchValue] = useState("")
-  const [image, setimage] = useState("")
+   const [image, setimage] = useState("")
   const [groupingKeyTypes, setGroupingKeyTypes] = useState<String[]>([])
   const [sortOrder, setSortOrder] = useState("asc");
   const [sortColumn, setSortColumn] = useState("");
@@ -69,6 +68,8 @@ const ProductTable: React.FC<ProductTableProps> = ({ groupProducts ,setGroupProd
     })
     setColorsMap(newColorsMap)
   }
+    // Sort the groups array based on the selected column and sorting order
+
   const handleSort = (column:string) => {
     if (column === sortColumn) {
       // If the same column is clicked, toggle the sorting order
@@ -80,7 +81,6 @@ const ProductTable: React.FC<ProductTableProps> = ({ groupProducts ,setGroupProd
     }
   };
   
-  // Sort the groups array based on the selected column and sorting order
 
 
   useEffect(() => {
@@ -94,6 +94,16 @@ const ProductTable: React.FC<ProductTableProps> = ({ groupProducts ,setGroupProd
         return sortOrder === "asc"
           ? a.gId.localeCompare(b.gId)
           : b.gId.localeCompare(a.gId);
+      }
+      if (sortColumn === "productName") {
+        return sortOrder === "asc"
+          ? a.offers[0].productName?.localeCompare(b.offers[0].productName)
+          : b.offers[0].productName?.localeCompare(a.offers[0].productName);
+      }
+      if (sortColumn === "brandName") {
+        return sortOrder === "asc"
+          ?  a.offers[0].brandName?.localeCompare(b.offers[0].brandName)
+          :   b.offers[0].brandName?.localeCompare(a.offers[0].brandName);
       }
       // Add additional cases for sorting other columns if needed
       return 0;
@@ -117,7 +127,6 @@ const ProductTable: React.FC<ProductTableProps> = ({ groupProducts ,setGroupProd
             <th className="px-4 py-2 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider" onClick={() => handleSort("gID")}>
             Group Id
   {sortColumn === "gID" && (
-
 <span>{sortOrder === "asc" ? " ▲" : " ▼"}</span>
     // <span className="ml-1">
     //   {sortOrder === "asc" ? <ArrowUpIcon /> : <ArrowDownIcon />}
@@ -129,11 +138,17 @@ const ProductTable: React.FC<ProductTableProps> = ({ groupProducts ,setGroupProd
               {" "}
               Image
             </th>
-            <th className="  px-4 py-2 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider">
+            <th className="  px-4 py-2 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider" onClick={()=>handleSort("productName")}>
               Product Name
+              {sortColumn === "productName" && (
+<span>{sortOrder === "asc" ? " ▲" : " ▼"}</span>
+              )}
             </th>
-            <th className="  px-4 py-2 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider">
+            <th className="  px-4 py-2 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider" onClick={()=>handleSort("brandName")}>
               Brand Name
+              {sortColumn === "brandName" && (
+<span>{sortOrder === "asc" ? " ▲" : " ▼"}</span>
+              )}
             </th>
             <th className="px-4 py-2 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider">
               Product url

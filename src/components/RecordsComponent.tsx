@@ -1,14 +1,14 @@
 import ProductTable from "./productTable"
 import axios from "axios"
 import React, { useEffect, useRef, useState } from "react"
- import { groupProduct } from "~/pages/api/groupProduct"
- import { productSearch } from "~/pages/api/productSearch"
+import { groupProduct } from "~/pages/api/groupProduct"
+import { productSearch } from "~/pages/api/productSearch"
 
 const RecordsComponent = () => {
   const API_BASE_URL = "http://localhost:8082/group-graph"
   const [currentPage, setCurrentPage] = useState(1) // Current page number
   const [totalPages, setTotalPages] = useState(1) // totale page numbers
-   const [search, setSearch] = useState("")
+  const [search, setSearch] = useState("")
   const [groupProducts, setGroupProducts] = useState<groupProduct[]>([]) // Initialize an empty array of the correct type
   const [productsSearchHistory, setProductsSearchHistory] = useState<
     productSearch[]
@@ -17,7 +17,6 @@ const RecordsComponent = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [image, setimage] = useState("")
 
-  
   const Pagination = () => {
     const pageNumbers = []
 
@@ -126,7 +125,7 @@ const RecordsComponent = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-       try {
+      try {
         const response = await axios.get(
           "http://localhost:8082/group-graph/products",
           {
@@ -147,8 +146,13 @@ const RecordsComponent = () => {
         console.error("Error fetching data:", error)
       }
     }
+
+    fetchData()
+  }, [currentPage, search])
+
+  useEffect(() => {
     const fetchSearchHistory = async () => {
-       try {
+      try {
         const response = await axios.get(
           "http://localhost:8082/group-graph/productsearchhistory"
         )
@@ -158,19 +162,16 @@ const RecordsComponent = () => {
       }
     }
     fetchSearchHistory()
-    fetchData()
-  }, [currentPage, search])
-
+  }, [])
   // Update the search value and apply the filtering
 
- 
   const [searchValues, setSearchValues] = useState<{ [key: string]: string }>(
     {}
   )
   const [showAutocompletes, setShowAutocompletes] = useState<{
     [key: string]: boolean
   }>({})
-  const inputRef = useRef<HTMLInputElement>(null); // Specify the type as HTMLInputElement
+  const inputRef = useRef<HTMLInputElement>(null) // Specify the type as HTMLInputElement
 
   const handleInputChange = (key: string, value: string) => {
     setSearchValues((prevValues) => ({ ...prevValues, [key]: value }))
@@ -179,7 +180,7 @@ const RecordsComponent = () => {
       [key]: true
     }))
   }
- 
+
   const handleKeyDown = (
     queryType: string,
     event: React.KeyboardEvent<HTMLInputElement>
@@ -309,7 +310,7 @@ const RecordsComponent = () => {
                 className="block p-4 pl-10  text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Search product's url"
               />
-{searchValues["url"] && (
+              {searchValues["url"] && (
                 <button
                   className="absolute inset-y-0 right-0 flex items-center pr-3 focus:outline-none"
                   onClick={() => handleInputChange("url", "")}>
@@ -327,8 +328,6 @@ const RecordsComponent = () => {
                   </svg>
                 </button>
               )}
-
-
             </div>
             {renderAutocompleteList("url")}
           </div>
@@ -454,7 +453,10 @@ const RecordsComponent = () => {
         </div>
       )}
 
-      <ProductTable groupProducts={groupProducts} setGroupProducts={setGroupProducts} />
+      <ProductTable
+        groupProducts={groupProducts}
+        setGroupProducts={setGroupProducts}
+      />
       <Pagination />
     </div>
   )
