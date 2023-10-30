@@ -41,10 +41,12 @@ const ProductTable: React.FC<ProductTableProps> = ({ groupProducts ,setGroupProd
     const groupingKeyCounts: Record<string, number> = {}
 
     groupProducts.forEach((groupProduct) => {
+      console.log("numne", groupProduct.offersNumber);
       groupProduct.offers.forEach((offer) => {
         offer.groupingKeys.forEach((groupingKey) => {
           if (!groupingKeyTypes.includes(groupingKey.type)) {
-            groupingKeyTypes.push(groupingKey.type)
+            groupingKeyTypes.push(groupingKey.type);
+            console.log(groupingKeyTypes);
           }
           const { type, value } = groupingKey
           const key = `${type}-${value}`
@@ -62,7 +64,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ groupProducts ,setGroupProd
           // Generate a random color for the grouping key value
           const color = generateRandomColor()
           newColorsMap[key] = color
-          console.log("map", newColorsMap)
+         // console.log("map", newColorsMap)
         }
       }
     })
@@ -95,15 +97,26 @@ const ProductTable: React.FC<ProductTableProps> = ({ groupProducts ,setGroupProd
           ? a.gId.localeCompare(b.gId)
           : b.gId.localeCompare(a.gId);
       }
-      if (sortColumn === "productName") {
+    else  if (sortColumn === "productName") {
         return sortOrder === "asc"
           ? a.offers[0].productName?.localeCompare(b.offers[0].productName)
           : b.offers[0].productName?.localeCompare(a.offers[0].productName);
       }
-      if (sortColumn === "brandName") {
+   else   if (sortColumn === "brandName") {
+     const brandNameA=   a.offers[0].brandName? a.offers[0].brandName:"";
+     const brandNameB=  b.offers[0].brandName? b.offers[0].brandName:""
         return sortOrder === "asc"
-          ?  a.offers[0].brandName?.localeCompare(b.offers[0].brandName)
-          :   b.offers[0].brandName?.localeCompare(a.offers[0].brandName);
+          ?  brandNameA.localeCompare(brandNameB)
+          : brandNameB.localeCompare(brandNameA);
+      }
+      else 
+      {
+        return sortOrder === "asc"
+        ? a.offersNumber-b.offersNumber
+        : b.offersNumber-a.offersNumber
+
+
+
       }
       // Add additional cases for sorting other columns if needed
       return 0;
@@ -114,8 +127,6 @@ const ProductTable: React.FC<ProductTableProps> = ({ groupProducts ,setGroupProd
 
   return (
     <div className="overflow-x-scroll overflow-y-scroll max-h-[800px] max-w-[1500px]">
- 
-
       <table className="table-auto  border border-gray-300 min-w-max">
         <thead className="sticky top-0 bg-gray-200 z-1">
           <tr className="border-b border-gray-300">
@@ -138,18 +149,24 @@ const ProductTable: React.FC<ProductTableProps> = ({ groupProducts ,setGroupProd
               {" "}
               Image
             </th>
-            <th className="  px-4 py-2 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider" onClick={()=>handleSort("productName")}>
-              Product Name
-              {sortColumn === "productName" && (
+            <th className="px-4 py-2 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider " onClick={() => handleSort("offers")}>
+               Offers
+   {sortColumn === "offers" && (
 <span>{sortOrder === "asc" ? " ▲" : " ▼"}</span>
-              )}
-            </th>
+     )}  </th>
             <th className="  px-4 py-2 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider" onClick={()=>handleSort("brandName")}>
               Brand Name
               {sortColumn === "brandName" && (
 <span>{sortOrder === "asc" ? " ▲" : " ▼"}</span>
               )}
             </th>
+            <th className="  px-4 py-2 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider" onClick={()=>handleSort("productName")}>
+              Product Name
+              {sortColumn === "productName" && (
+<span>{sortOrder === "asc" ? " ▲" : " ▼"}</span>
+              )}
+            </th>
+     
             <th className="px-4 py-2 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider">
               Product url
             </th>
@@ -170,40 +187,47 @@ const ProductTable: React.FC<ProductTableProps> = ({ groupProducts ,setGroupProd
         </thead>
         <tbody>
           {groupProducts?.map((group, index) => (
-            <React.Fragment key={index}>
-              <tr className="border-b border-gray-300">
-                <td
+             <React.Fragment key={index}>
+               <tr    style={{border:"1px solid"}} >
+               {  /* className="border-b border-gray-300" */}
+                 <td
                   className="px-4 py-2 bg-gray-200"
-                  rowSpan={group.offers.length + 1}>
-                  {index + 1}
+                  rowSpan={group.offersNumber + 1}>
+                  {index + 1
+                  }
                 </td>{" "}
                 {/* Numerate the rows */}
                 <td
                   className="px-4 py-2 bg-gray-200"
-                  rowSpan={group.offers.length + 1}>
+                  rowSpan={group.offersNumber + 1}>
                   {group.gId}
                 </td>
-                <td className="px-4 py-2 " rowSpan={group.offers.length + 1}>
+                <td className="px-4 py-2 " rowSpan={group.offersNumber + 1}>
                   <img
                     src={group.productImage}
                     className="w-10 h-10 rounded-full"
                   />
                 </td>
+                <td className="px-4 py-2 " rowSpan={group.offersNumber + 1}>
+               {group.offersNumber}
+                </td>
+                 
               </tr>
               {group.offers.map((product, productIndex) => (
                 <React.Fragment key={productIndex}>
-                  <tr className="border-b border-gray-300">
-                    <td className="px-4 py-2 whitespace-nowrap ">
-                      <span className="tooltip max-w-xs ">
-                        {product.productName}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2 whitespace-nowrap  ">
+                  <tr  className="">
+                  <td className="px-4 py-2 whitespace-nowrap  ">
                       {" "}
                       <span className="tooltip max-w-xs  ">
                         {product.brandName}
                       </span>{" "}
                     </td>
+                    <td className="px-4 py-2 whitespace-nowrap ">
+                      <span className="tooltip max-w-xs ">
+                        {product.productName}
+                      </span>
+                    </td>
+                   
                     <td className="px-4 py-2 whitespace-nowrap">
                       <a
                         href={product.productUrl}
@@ -233,7 +257,8 @@ const ProductTable: React.FC<ProductTableProps> = ({ groupProducts ,setGroupProd
                             key={key}
                             style={{ backgroundColor: color }}>
                             {gkvalue}
-                          </span>
+                             
+                            </span>
                         </td>
                       )
                     })}
@@ -282,54 +307,6 @@ const ProductTable: React.FC<ProductTableProps> = ({ groupProducts ,setGroupProd
   )
 }
 
-//     <div className="table-container">
-//       <div className="table-wrapper">
-//         <table className="min-w-full divide-y divide-gray-200">
-//           <thead>
-//             <tr>
-//               <th className="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider">
-//                 Group ID
-//               </th>
-//               <th className="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider">
-//                 Image
-//               </th>
-//               <th className="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider">
-//                 Product offers
-//               </th>
-//               {groupingKeyTypes.map((type) => (
-//                 <th key={type} className="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider">
-//                   {type}
-//                 </th>
-//               ))}
-//               <th className="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-blue-800 uppercase tracking-wider">
-//                 Action
-//               </th>
-//             </tr>
-//           </thead>
-//           <tbody className="bg-white divide-y divide-gray-200">
-//             {groupProducts?.map((groupProduct) => (
-//               <tr key={groupProduct.gId}>
-//                 <td className="px-6 py-4 whitespace-no-wrap">
-//                   <div className="text-sm leading-5 text-gray-900">{groupProduct.gId}</div>
-//                 </td>
-//                 <td className="px-6 py-4 whitespace-no-wrap">
-//                   <img src={groupProduct.productImage} className="w-10 h-10 rounded-full" alt="Product Image" />
-//                 </td>
-//                 <td className="px-6 py-4 whitespace-no-wrap">
-//                   {groupProduct.offers.map((offer) => (
-//                     <div key={offer.productId} className="text-sm leading-5 text-gray-900">
-//                       {offer.productName}
-//                     </div>
-//                   ))}
-//                 </td>
-//                 {groupingKeyTypes.map((type) => (
-//                   <td key={`${type}_${groupProduct.gId}`} className="px-6 py-4 whitespace-no-wrap">
-//                     {groupProduct.offers.map((offer) => {
-//                       const groupingKeyValue = offer.groupingKeys.find((key) => key.type === type);
-//                       return groupingKeyValue ? groupingKeyValue.value : '-';
-//                     })}
-//                   </td>
-//                 ))}
 //                 <td className="px-6 py-4 whitespace-no-wrap">
 //                   <button
 //                     className="px-4 py-2 bg-blue-500 text-white font-semibold rounded"

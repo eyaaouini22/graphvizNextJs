@@ -139,7 +139,18 @@ const RecordsComponent = () => {
           }
         )
         const jsonResponse = response.data
-        const parsedContent: groupProduct[] = jsonResponse.data.content
+    //    const parsedContent: groupProduct[] = jsonResponse.data.content
+
+        const parsedContent: groupProduct[] = jsonResponse.data.content.map((item: any) => {
+          const product: groupProduct = new groupProduct(
+            item.gId,
+            item.productImage,
+            item.offers
+          );
+          return product;
+        });
+
+        console.log(parsedContent);
         setGroupProducts(parsedContent)
         setTotalPages(jsonResponse.data.totalPages)
       } catch (error) {

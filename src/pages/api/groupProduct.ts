@@ -5,11 +5,12 @@ import { productOffer } from "./productOffer";
     private _gId:string;
     private _productImage:string;
      private _offers:productOffer[];
-
+ 
     constructor(gId:string, productImage:string,offers:productOffer[] ){
     this._gId=gId;
     this._productImage=productImage;
     this._offers=offers;
+  
     }
      get gId(): string {
         return this._gId;
@@ -31,5 +32,9 @@ import { productOffer } from "./productOffer";
       }
       get offers(): productOffer[]{
         return this._offers;
+      }
+       
+      get offersNumber(): number {
+        return this._offers.length; // Computes the length directly when requested
       }
     }

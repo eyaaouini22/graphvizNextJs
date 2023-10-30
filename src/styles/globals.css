@@ -89,4 +89,8 @@
   }
   
   
-  
+  .border-products{
+
+    border-bottom: 0.4Px solid;
+    border-color: rgb(209 213 219 / var(--tw-border-opacity));
+  }
