@@ -1,0 +1,180 @@
+@import "./site.css";
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+}
+
+.wrap {
+  width: 100%;
+  height: 100%;
+
+  display: grid;
+  grid-template-areas: "header" "app";
+  grid-template-rows: max-content minmax(0, 1fr);
+}
+
+#app {
+  grid-area: app;
+  display: grid;
+  grid-template-areas: "editor-toolbar output-toolbar" "editor output" "editor errors";
+  grid-template-columns: 50% 1fr;
+  grid-template-rows: max-content 1fr fit-content(20%);
+}
+
+.editor {
+  grid-area: editor;
+  border-right: 1px solid #ccc;
+}
+
+.cm-editor {
+  height: 100%;
+  overflow: auto;
+  background: #fff;
+}
+
+.cm-editor.cm-focused {
+  outline: none;
+}
+
+.cm-editor .cm-scroller {
+  overflow: auto;
+}
+
+
+.errors {
+  grid-area: errors;
+  background: #eee;
+  border-top: 1px solid #ccc;
+  margin: 0;
+  overflow: auto;
+}
+
+.errors table {
+  border-collapse: collapse;
+  border-style: hidden;
+}
+
+.errors td {
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+.errors .level {
+  text-align: center;
+}
+
+.errors .message {
+  width: 100%;
+}
+
+.errors .level span {
+  padding: 3px 4px 2px 4px;
+  border-radius: 2px;
+  text-transform: capitalize;
+  font-size: 12px;
+}
+
+.errors .level span.error {
+  color: #fff;
+  background: #f33;
+}
+
+.errors .level span.warning {
+  color: #000;
+  background: #fc3;
+}
+
+
+.editor-toolbar {
+  grid-area: editor-toolbar;
+  border-right: 1px solid #ccc;
+  justify-content: center;
+}
+
+.output-toolbar {
+  grid-area: output-toolbar;
+  justify-content: center;
+}
+
+.toolbar {
+  padding: 8px;
+  background: #eee;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.toolbar .toolbar-item {
+  display: grid;
+  gap: 4px;
+}
+
+.toolbar .toolbar-flexible-space {
+  flex-grow: 1;
+}
+
+.toolbar .toolbar-item-group {
+  display: flex;
+  gap: 4px;
+}
+
+.toolbar-item label {
+  text-align: center;
+  font-size: 12px;
+}
+
+
+.output {
+  grid-area: output;
+  background: #ddd;
+  display: grid;
+  overflow: hidden;
+  position: relative;
+  grid-template-rows: 100%;
+}
+
+.output.invalid > * {
+  opacity: 0.5;
+  transition-delay: 0.2s;
+  transition-duration: 0;
+  transition-property: opacity;
+}
+
+.output .raw {
+  padding: 8px;
+  font-family: monospace;
+  white-space: pre-wrap;
+  overflow: auto;
+}
+
+@media (max-width: 750px) {
+  #app {
+    grid-template-areas: "editor-toolbar" "editor" "output-toolbar" "output" "errors";
+    grid-template-columns: auto;
+    grid-template-rows: max-content 30% max-content 1fr fit-content(20%);
+  }
+
+  .editor {
+    border-right: none;
+  }
+
+  .output-toolbar {
+    border-top: 1px solid #ccc;
+  }
+
+  .editor-toolbar {
+    border-right: none;
+  }
+}
+
+@media (max-width: 450px) {
+  .editor {
+    font-size: 16px;
+  }
+}

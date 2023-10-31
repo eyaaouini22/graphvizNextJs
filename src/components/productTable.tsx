@@ -1,8 +1,9 @@
 import axios from "axios"
 import React, { useEffect, useState } from "react"
 import { groupProduct } from "~/pages/api/groupProduct"
-
-interface ProductTableProps {
+ import { useRouter } from 'next/router';
+import { tree } from "next/dist/build/templates/app-page";
+ interface ProductTableProps {
   groupProducts: groupProduct[];
   setGroupProducts: (newValue: groupProduct[]) => void;
 }
@@ -10,11 +11,71 @@ interface ProductTableProps {
 const ProductTable: React.FC<ProductTableProps> = ({ groupProducts ,setGroupProducts}) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [colorsMap, setColorsMap] = useState<Record<string, string>>({})
-   const [image, setimage] = useState("")
+   const [image, setimage] = useState("");
+   const [dot, setDot] = useState("digraph { a -> b }  ")
+
   const [groupingKeyTypes, setGroupingKeyTypes] = useState<String[]>([])
   const [sortOrder, setSortOrder] = useState("asc");
   const [sortColumn, setSortColumn] = useState("");
+ 
+ 
+    const router = useRouter();
   
+    // const generateDot = (id: string) => {
+    //   const xhr = new XMLHttpRequest();
+    //   xhr.open("GET", "http://localhost:8082/group-graph/products/generateGraphByGID/" + id, false); // `false` makes the request synchronous
+    //   xhr.send();
+    
+    //   if (xhr.status === 200) {
+    //     let response;
+    //     try {
+    //       response = JSON.parse(xhr.responseText);
+    //       console.log("my response", response);
+    //       setDot(response);
+    //     } catch (error) {
+    //       console.error("Error parsing JSON:", error);
+    //       // Handle the error when JSON parsing fails
+    //     }
+    //   } else {
+    //     console.log("Request failed. Status: " + xhr.status);
+    //     // Handle the failed request here
+    //   }
+    // };
+    
+
+  const generateDot =  async (id: String)  => {
+    try {
+      const response =  await axios.get(
+        "http://localhost:8082/group-graph/products/generateGraphByGID/" + id
+      )
+      console.log("myrespone",response.data)
+
+      setDot(response.data);
+
+      router.push({
+        pathname: '/vizWebSite',
+        query: { dot: response.data}
+      });
+  
+     } catch (error: any) {
+      console.log(error.response?.data)
+     }
+  }
+
+  const handleGoToGraph = async (id:string) => {
+      
+    try{
+      const test = await generateDot(id);
+             console.log("myrespone",test)
+
+             await  router.push({
+         pathname: '/vizWebSite',
+         query: { dot: dot}
+       });
+     } catch (error: any) {
+       console.log(error.response?.data)
+     }
+    }
   const generateImage = async (id: String) => {
     try {
       const response = await axios.get(
@@ -209,7 +270,10 @@ const ProductTable: React.FC<ProductTableProps> = ({ groupProducts ,setGroupProd
                   />
                 </td>
                 <td className="px-4 py-2 " rowSpan={group.offersNumber + 1}>
-               {group.offersNumber}
+                <span className="  text-blue-800 font-bold ">
+                          {group.offersNumber}
+                        </span>
+            
                 </td>
                  
               </tr>
@@ -262,43 +326,25 @@ const ProductTable: React.FC<ProductTableProps> = ({ groupProducts ,setGroupProd
                         </td>
                       )
                     })}
-
-                    {/* <td className="px-4 py-2 whitespace-nowrap  ">
-                      <ul className="list-disc list-inside">
-                        {product.groupingKeys.map((groupingKey) => {
-                          // Get the color from colorsMap
-
-                          const { type, value } = groupingKey
-                          const key = `${type}-${value}`
-                          const color = colorsMap[key] || ""
-                          return (
-                            <li
-                              className="tooltip max-w-xs"
-                              key={key}
-                              style={{ backgroundColor: color }}>
-                              {groupingKey.type}: {groupingKey.value}
-                            </li>
-                          )
-                        })}
-                      </ul>
-                    </td> */}
                     <td className="px-6 py-4 whitespace-no-wrap">
                       {product.storeName}
                     </td>
                     <td className="px-6 py-4 whitespace-no-wrap">
-                      <button
+                      {/* <button
                         className="px-4 py-2 bg-blue-500 text-white font-semibold rounded"
                         style={{ marginRight: "5px" }}
                         onClick={() => generateImage(group.gId)}>
                         Image
-                      </button>
-                      <button className="px-4 py-2 bg-blue-500 text-white font-semibold rounded">
+                      </button>  */}
+                 
+                      <button  onClick={()=>generateDot(group.gId)}    className="px-4 py-2 bg-blue-500 text-white font-semibold rounded">
                         Html
                       </button>
                     </td>
                   </tr>
                 </React.Fragment>
               ))}
+              
             </React.Fragment>
           ))}
         </tbody>
